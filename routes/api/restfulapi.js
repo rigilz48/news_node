@@ -2,8 +2,13 @@ const express = require('express');
 const app = express();
 const port = 3030;
 
-//Import body parser
+//Import
+const articleRouter = require('../articleAPI');
 const bodyParser = require('body-parser');
+const cors = require('cors');
+
+app.use('/api/article', articleRouter);
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({
     extended: false
@@ -12,10 +17,8 @@ app.use(bodyParser.urlencoded({
 // parse application/json
 app.use(bodyParser.json())
 
-//Import routes articleAPI
-const articleRouter = require('../articleAPI');
-
-app.use('/api/article', articleRouter);
+//use CORS
+app.use(cors())
 
 /** ALTERNATIF PORT ACAK */
 // Mengatur port menjadi 0 (port dinamis)
