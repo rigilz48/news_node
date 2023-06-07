@@ -111,8 +111,64 @@ router.get('/(:id)', (req, res) => {
 });
 
 /** UBAH ARTIKEL */
-router.patch('/update/(:id)', (req, res) => {
+router.patch('/update/(:id)', [
     //Validation
+    body('title').notEmpty(),
+    body('content').notEmpty()
+], (req, res) => {
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()) {
+        return res.status(422).json({
+            errors: errors.array()
+        });
+    }
+
+    //ID Article
+    const id = req.params.id;
+
+    //Data Article
+    let formData = {
+        title_article: req.body.title,
+        content_article: req.body.content,
+        updated_at: new Date
+    }
+
+    //Update query
+    connection.query(`UPDATE article SET ? WHERE id_article = ${id}`, formData, (err, rows) => {
+        //if(err) throw err
+        if(err){
+            return res.status(500).json({
+                status: false,
+                message: 'Internal Server Error'
+            })
+        } else {
+            return res.status(200).json({
+                status: true,
+                message: 'Update Article Successfully'
+            })
+        }
+    })
 });
+
+/** UBAH ARTIKEL */
+router.delete('/delete/(:id)', (req, res) => {
+    let id = req.params.id;
+
+    connection.query(`DELETE FROM article WHERE id_article = ${id}`, (err, rows) => {
+        //if(err) throw err
+        if(err){
+            return res.status(500).json({
+                status: false,
+                message: 'Internal Server Error'
+            })
+        } else {
+            return res.status(200).json({
+                status: true,
+                message: 'Delete Article Successfully'
+            })
+        }
+    })
+})
 
 module.exports = router;
